@@ -10,7 +10,7 @@ A sample README.md file
 
 There is no special installation process to do. Python 3.x is required though.
 
-Launch the project with the fllowing command : 
+Launch the project with the following command : 
 
 ```bash
 python pyodide_server.py
