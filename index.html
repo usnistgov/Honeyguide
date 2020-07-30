@@ -6,15 +6,85 @@
         window.languagePluginUrl = 'https://pyodide-cdn2.iodide.io/v0.15.0/full/';
     </script>
     <script src="https://pyodide-cdn2.iodide.io/v0.15.0/full/pyodide.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
 </head>
 
 <body>
-    Pyodide test page <br>
+    <div class="container">
+    <h1>Pyodide test page </h1>
     Hello KEA team this pyodide page is running. In the console you can see python code running too
+    <br />
+    <br />
+
+    <!-- insert input to insert raw text in here -->
+    <textarea placeholder="type text here" id="demo" class="form-control" rows="3" ></textarea>
+    <br />
+
+
+    <button class="btn btn-outline-primary" type="button" onclick="mainFunction()">Launch Python Script</button>
+
+    </div>
+
     <script type="text/javascript">
-        languagePluginLoader.then(function () {
-            console.log(pyodide.runPython('import sys\nsys.version'));
-            console.log(pyodide.runPython('print(1 + 2)'));
-        });
+
+        value = document.getElementById("demo").value;
+
+
+        function mainFunction() {
+            console.log(document.getElementById('demo'));
+            languagePluginLoader.then(function () {
+                initPythonPackages();
+            });
+        }
+
+        function initPythonPackages() {
+            packages = ['nltk', 'numpy', 'pandas', 'micropip'];
+            pyodide.loadPackage(packages).then(() => {
+
+                pyodide.runPython(`import nltk
+
+def readability(df):
+   return df['sentence'].apply(tx.flesch_kincaid_grade)
+def readability2(df):
+    return df['sentence'].apply(tx.syllable_count)
+def readability3(df):
+    return df['sentence'].apply(tx.lexicon_count)
+def readability4(df):
+    return df['sentence'].apply(tx.automated_readability_index)
+def readability5(df):
+    return df['sentence'].apply(tx.gunning_fog)
+def readability6(df):
+    return df['sentence'].apply(tx.text_standard)
+
+from js import value
+
+text = value
+print(text)
+sys.stdout.flush()
+
+a_list = nltk.tokenize.sent_tokenize(text)
+
+df2 = pd.DataFrame(data={'sentence': a_list}).assign(overall_score=readability6).assign(num_words=readability3).assign(num_syllab=readability2).assign(FK_score=readability).assign(ari_score=readability4).assign(fog_score=readability5)
+
+print(df2)
+sys.stdout.flush()
+
+with pd.ExcelWriter('output.xlsx') as writer: 
+    df2.to_excel(writer, sheet_name = 'test')
+
+sent_input = input("Enter the sentence you want to check : ") 
+print("The Flesch Reading Grade score: ",tx.flesch_kincaid_grade(sent_input))
+print("The Flesch Reading Ease score: ",tx.flesch_reading_ease(sent_input))
+
+`);
+            });
+        }
+
+        function run(code) {
+            pyodide.runPython(code);
+        }
+
+
+
     </script>
 </body>

@@ -15,7 +15,6 @@ if sys.version_info < (3, 7, 5):
     # Fix for WASM MIME type for older Python versions
     Handler.extensions_map['.wasm'] = 'application/wasm'
 
-
 if __name__ == '__main__':
     port = 8000
     with socketserver.TCPServer(("", port), Handler) as httpd:
