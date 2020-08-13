@@ -1,6 +1,5 @@
 import micropip
 import pprint
-from functools import partial
 
 def get_textstat(stat, text):
     import textstat
@@ -22,10 +21,4 @@ def report_stats(text):
 
 from js import value as text 
 report = micropip.install('textstat').then(report_stats(text))
-
-
-
-
-
-
 
