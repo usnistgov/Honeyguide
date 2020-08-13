@@ -43,9 +43,10 @@
 
                 pyodide.runPython(`
 import micropip
-import pprint
+from functools import partial
+from pprint import pprint
 
-def get_textstat(stat, text):
+def get_textstat(text, stat):
     import textstat
     return getattr(textstat, stat)(text)
 
@@ -58,7 +59,7 @@ def report_stats(text):
     ]
     report = dict(zip(
         stat_funcs,
-        map(get_textstat, stat_funcs)
+        map(partial(get_textstat,text), stat_funcs)
     ))
     pprint(report)
     return report
