@@ -38,44 +38,34 @@
         }
 
         function initPythonPackages() {
-            packages = ['nltk', 'numpy', 'pandas', 'micropip'];
+            packages = ['micropip'];
             pyodide.loadPackage(packages).then(() => {
 
-                pyodide.runPython(`import nltk
+                pyodide.runPython(`
+import micropip
+from functools import partial
+from pprint import pprint
 
-def readability(df):
-   return df['sentence'].apply(tx.flesch_kincaid_grade)
-def readability2(df):
-    return df['sentence'].apply(tx.syllable_count)
-def readability3(df):
-    return df['sentence'].apply(tx.lexicon_count)
-def readability4(df):
-    return df['sentence'].apply(tx.automated_readability_index)
-def readability5(df):
-    return df['sentence'].apply(tx.gunning_fog)
-def readability6(df):
-    return df['sentence'].apply(tx.text_standard)
+def get_textstat(text, stat):
+    import textstat
+    return getattr(textstat, stat)(text)
 
-from js import value
 
-text = value
-print(text)
-sys.stdout.flush()
+def report_stats(text):
+    
+    stat_funcs = [
+        "text_standard",  # aggregate of several reading gradelevel metrics
+        "difficult_words",
+    ]
+    report = dict(zip(
+        stat_funcs,
+        map(partial(get_textstat,text), stat_funcs)
+    ))
+    pprint(report)
+    return report
 
-a_list = nltk.tokenize.sent_tokenize(text)
-
-df2 = pd.DataFrame(data={'sentence': a_list}).assign(overall_score=readability6).assign(num_words=readability3).assign(num_syllab=readability2).assign(FK_score=readability).assign(ari_score=readability4).assign(fog_score=readability5)
-
-print(df2)
-sys.stdout.flush()
-
-with pd.ExcelWriter('output.xlsx') as writer: 
-    df2.to_excel(writer, sheet_name = 'test')
-
-sent_input = input("Enter the sentence you want to check : ") 
-print("The Flesch Reading Grade score: ",tx.flesch_kincaid_grade(sent_input))
-print("The Flesch Reading Ease score: ",tx.flesch_reading_ease(sent_input))
-
+from js import value as text 
+report = micropip.install('textstat').then(report_stats(text))
 `);
             });
         }
