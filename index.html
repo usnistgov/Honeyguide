@@ -28,10 +28,11 @@
 
     <script type="text/javascript">
 
-        value = document.getElementById("demo").value;
+        var value = "test";
 
 
         function mainFunction() {
+            value = document.getElementById("demo").value;
             languagePluginLoader.then(function () {
                 initPythonPackages();
             });
@@ -49,8 +50,8 @@ def get_textstat(text, stat):
     import textstat
     return getattr(textstat, stat)(text)
 
-
-def report_stats(text):
+def report_stats(*args):
+    from js import value as text
     stat_funcs = [
         "text_standard",  # aggregate of several reading gradelevel metrics
         "difficult_words",
@@ -62,7 +63,6 @@ def report_stats(text):
     pprint(report)
     return report
 
-from js import value as text 
 report = micropip.install('textstat').then(report_stats)
 `);
             });
