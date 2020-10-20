@@ -6,22 +6,23 @@
         window.languagePluginUrl = 'https://pyodide-cdn2.iodide.io/v0.15.0/full/';
     </script>
     <script src="https://pyodide-cdn2.iodide.io/v0.15.0/full/pyodide.js"></script>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+        integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
 </head>
 
 <body>
     <div class="container">
-    <h1>Pyodide test page </h1>
-    Hello KEA team this pyodide page is running. In the console you can see python code running too
-    <br />
-    <br />
+        <h1>Pyodide test page </h1>
+        Hello KEA team this pyodide page is running. In the console you can see python code running too
+        <br />
+        <br />
 
-    <!-- insert input to insert raw text in here -->
-    <textarea placeholder="type text here" id="demo" class="form-control" rows="3" ></textarea>
-    <br />
+        <!-- insert input to insert raw text in here -->
+        <textarea placeholder="type text here" id="demo" class="form-control" rows="3"></textarea>
+        <br />
 
 
-    <button class="btn btn-outline-primary" type="button" onclick="mainFunction()">Launch Python Script</button>
+        <button class="btn btn-outline-primary" type="button" onclick="mainFunction()">Launch Python Script</button>
 
     </div>
 
@@ -31,16 +32,14 @@
 
 
         function mainFunction() {
-            console.log(document.getElementById('demo'));
             languagePluginLoader.then(function () {
                 initPythonPackages();
             });
         }
 
         function initPythonPackages() {
-            packages = ['micropip'];
+            packages = ['micropip', 'setuptools'];
             pyodide.loadPackage(packages).then(() => {
-
                 pyodide.runPython(`
 import micropip
 from functools import partial
@@ -52,7 +51,6 @@ def get_textstat(text, stat):
 
 
 def report_stats(text):
-    
     stat_funcs = [
         "text_standard",  # aggregate of several reading gradelevel metrics
         "difficult_words",
@@ -65,7 +63,7 @@ def report_stats(text):
     return report
 
 from js import value as text 
-report = micropip.install('textstat').then(report_stats(text))
+report = micropip.install('textstat').then(report_stats)
 `);
             });
         }

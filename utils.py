@@ -3,7 +3,7 @@ from functools import partial
 from pprint import pprint
 
 def get_textstat(text, stat):
-    import textstat
+    from textstat.textstat import textstat
     return getattr(textstat, stat)(text)
 
 
@@ -24,4 +24,3 @@ if __name__ == "__main__":
     import sys
     text  = sys.argv[1]
     report_stats(text)
-
