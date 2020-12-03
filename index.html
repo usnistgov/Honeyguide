@@ -13,7 +13,7 @@
 <body>
     <div class="container">
         <h1>Pyodide test page </h1>
-        Hello KEA team this pyodide page is running. In the console you can see python code running too
+        Hello KEA team this pyodide page is running.
         <br />
         <br />
 
@@ -21,8 +21,17 @@
         <textarea placeholder="type text here" id="demo" class="form-control" rows="3"></textarea>
         <br />
 
-
         <button class="btn btn-outline-primary" type="button" onclick="mainFunction()">Launch Python Script</button>
+        <br />
+        <hr>
+        <div id="result-section">
+            <h2>Results</h2>
+
+            <div id="sentence_count">Sentence count : </div>
+            <div id="difficultWords">Difficult words : </div>
+            <div id="flesch_reading_ease">Flesh reading ease : </div>
+            <div id="grade">Grade : </div>
+        </div>
 
     </div>
 
@@ -37,10 +46,13 @@
                 initPythonPackages();
             });
         }
+        function getTextStat() {
+
+        }
 
         function initPythonPackages() {
             packages = ['micropip', 'setuptools'];
-            pyodide.loadPackage(packages).then(() => {
+            pyodide.loadPackage(packages).then(function () {
                 pyodide.runPython(`
 import micropip
 from functools import partial
@@ -55,6 +67,8 @@ def report_stats(*args):
     stat_funcs = [
         "text_standard",  # aggregate of several reading gradelevel metrics
         "difficult_words",
+        "sentence_count",
+        "flesch_reading_ease"
     ]
     report = dict(zip(
         stat_funcs,
@@ -65,11 +79,19 @@ def report_stats(*args):
 
 report = micropip.install('textstat').then(report_stats)
 `);
+
+                pyodide.globals.report.then(res => {
+                    // console.log(JSON.stringify(res));
+                    document.getElementById("sentence_count").innerText = document.getElementById("sentence_count").innerText + " " + res.sentence_count;
+                    document.getElementById("difficultWords").innerText = document.getElementById("difficultWords").innerText + " " + res.difficult_words;
+                    document.getElementById("flesch_reading_ease").innerText = document.getElementById("flesch_reading_ease").innerText + " " + res.flesch_reading_ease;
+                    document.getElementById("grade").innerText = document.getElementById("grade").innerText + " " + res.text_standard;
+                });
             });
         }
 
         function run(code) {
-            pyodide.runPython(code);
+            pyodide.runPythonAsync(code).then(output => { return output });
         }
 
     </script>
